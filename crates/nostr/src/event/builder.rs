@@ -1085,7 +1085,7 @@ impl EventBuilder {
     pub fn build_vote(data: VoteData) -> Self {
         let content = data.reason_for_voting.clone();
         let tags: Vec<Tag> = data.into();
-        Self::new(Kind::Poll, content, tags)
+        Self::new(Kind::Vote, content, tags)
     }
 
     /// Gift Wrap from seal
