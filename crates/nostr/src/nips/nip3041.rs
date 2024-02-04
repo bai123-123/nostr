@@ -67,11 +67,11 @@ pub struct VoteData {
 
 impl VoteData {
     /// Create a new vote
-    pub fn new(ev_id:EventId,choices: &Vec<String>, reason: String) -> Self {
+    pub fn new(ev_id:EventId,choices: &Vec<String>, reason: &str) -> Self {
         Self {
             event_id: ev_id,
             choices: choices.to_vec(),
-            reason_for_voting: reason,
+            reason_for_voting: reason.to_owned(),
         }
     }
 }

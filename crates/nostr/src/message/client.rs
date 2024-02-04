@@ -115,7 +115,7 @@ impl ClientMessage {
         }
     }
 
-    /// Create `COUNT` message
+    /// Create `query` message
     pub fn query(specific_sid: EventId) -> Self {
         Self::Query {
             specific_sid,
