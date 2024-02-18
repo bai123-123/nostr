@@ -25,6 +25,7 @@ use crate::nips::nip53::{self, LiveEventMarker, LiveEventStatus};
 use crate::nips::nip90::DataVendingMachineStatus;
 use crate::types::url::{ParseError, Url};
 use crate::{Event, JsonUtil, Kind, Timestamp, UncheckedUrl};
+use crate::TagKind::Ends;
 
 /// [`Tag`] error
 #[derive(Debug)]
@@ -668,6 +669,10 @@ pub enum Tag {
         multi_select: String,
         /// LC(in depth|VLC) when surv expires,0 LC the uplimit of VLC(2M)
         clock: String,
+        ///poll start timestamp
+        start: String,
+        ///poll end timestamp
+        end: String,
         /// event name
         title: String,
         /// optional Poll & Vote information ("" if not present)
@@ -1079,12 +1084,14 @@ impl<S> TryFrom<Vec<S>> for Tag
                 TagKind::Poll => Ok(Self::Poll {
                     multi_select: tag[1].as_ref().to_owned(),
                     clock: tag[2].as_ref().to_owned(),
-                    title: tag[3].as_ref().to_owned(),
-                    info: tag[4].as_ref().to_owned(),
-                    options: tag[5..].iter().map(|s| s.as_ref().to_string() ).collect(),
+                    start: tag[3].as_ref().to_owned(),
+                    end: tag[4].as_ref().to_owned(),
+                    title: tag[5].as_ref().to_owned(),
+                    info: tag[6].as_ref().to_owned(),
+                    options: tag[7..].iter().map(|s| s.as_ref().to_string()).collect(),
                 }),
                 TagKind::Vote => Ok(Self::Vote {
-                    choices: tag[1..].iter().map(|s| s.as_ref().to_string() ).collect(),
+                    choices: tag[1..].iter().map(|s| s.as_ref().to_string()).collect(),
                 }),
 
                 _ => Ok(Self::Generic(
@@ -1316,18 +1323,20 @@ impl From<Tag> for Vec<String> {
             Tag::Poll {
                 multi_select,
                 clock,
+                start,
+                end,
                 title,
                 info,
                 options
             } => {
-                let mut tag = vec![TagKind::Poll.to_string(), multi_select, clock, title, info];
+                let mut tag = vec![TagKind::Poll.to_string(), multi_select, clock,start,end, title, info];
                 for i in options {
                     tag.push(i);
                 }
                 tag
             }
             Tag::Vote {
-               choices
+                choices
             } => {
                 let mut tag = vec![TagKind::Vote.to_string()];
                 for i in choices {

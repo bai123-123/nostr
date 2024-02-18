@@ -10,6 +10,10 @@ pub struct PollData {
     pub multi_select: String,
     /// LC(in depth|VLC) when surv expires,0 LC the uplimit of VLC(2M)
     pub clock: String,
+    ///poll start timestamp
+    pub start: String,
+    ///poll end timestamp
+    pub end: String,
     /// event name
     pub title: String,
     /// optional Poll & Vote information ("" if not present)
@@ -20,7 +24,7 @@ pub struct PollData {
 
 impl PollData {
     /// Create a new poll
-    pub fn new(multi_select: bool, clock: &str, title: &str, info: &str, options: &Vec<String>) -> Self {
+    pub fn new(multi_select: bool, clock: &str, start: &str, end: &str, title: &str, info: &str, options: &Vec<String>) -> Self {
         let mut ms = "single";
         if multi_select {
             ms = "multi"
@@ -28,6 +32,8 @@ impl PollData {
         Self {
             multi_select: ms.into(),
             clock: clock.into(),
+            start: start.into(),
+            end: end.into(),
             title: title.into(),
             info: info.into(),
             options: options.to_vec(),
@@ -41,6 +47,8 @@ impl From<PollData> for Vec<Tag> {
         tags.push(Tag::Poll {
             multi_select: value.multi_select,
             clock: value.clock,
+            start: value.start,
+            end:value.end,
             title: value.title,
             info: value.info,
             options: value.options,
@@ -58,8 +66,7 @@ impl From<PollData> for String {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VoteData {
-    
-    pub event_id :EventId,
+    pub event_id: EventId,
     /// array of index of the option | the first option is 0
     pub choices: Vec<String>,
     pub reason_for_voting: String,
@@ -67,7 +74,7 @@ pub struct VoteData {
 
 impl VoteData {
     /// Create a new vote
-    pub fn new(ev_id:EventId,choices: &Vec<String>, reason: &str) -> Self {
+    pub fn new(ev_id: EventId, choices: &Vec<String>, reason: &str) -> Self {
         Self {
             event_id: ev_id,
             choices: choices.to_vec(),
